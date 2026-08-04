@@ -43,17 +43,14 @@ class handler(BaseHTTPRequestHandler):
             - 24-Hour Forecast: {forecast_str}
             - Additional Context: {additional}
 
-            ### EXTRA
-            - Do not always expect additional context. If it is not provided, simply ignore it if it is empty or isn't really important or relevant.
+            ### FALLBACK RULE
+            - IF data inputs are missing or marked 'N/A', DO NOT invent, hallucinate, or make up weather metrics. Output: "Insufficient weather data provided -- Unable to generate accurate daily insights;" repeated or structured as needed.
 
             ### OUTPUT REQUIREMENTS
-            - Output EXACTLY 3 weather insights.
+            - Output EXACTLY 3 weather insights based strictly on provided data.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
-
-            ### EXAMPLE OUTPUT
-            Protect your skin -- UV is currently extreme, so limit direct sun exposure and seek shade during peak hours; Bring an umbrella -- light showers are expected to begin around noon and continue throughout the evening; Layer up wisely -- cooler air and shifting winds will cause temperatures to drop sharply after sunset;
 
             ### RESPONSE:
                         
