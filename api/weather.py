@@ -5,6 +5,9 @@ from groq import Groq
 class handler(BaseHTTPRequestHandler):
     def run_llm(self, data):
         try:
+            if not data or (data.get('current_temp') is None and data.get('forecast_24h') is None and data.get('forecast') is None):
+                raise Exception("No data provided")
+
             current_time = data.get('current_time', 'N/A')
             current_temp = data.get('current_temp', 'N/A')
             current_wind = data.get('current_wind', 'N/A')
