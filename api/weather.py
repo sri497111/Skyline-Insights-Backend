@@ -48,15 +48,15 @@ class handler(BaseHTTPRequestHandler):
             - Today's Forecast: {forecast_str}
             - Additional Context: {additional}
 
-            ### FORMATTING RULES FOR TEMPERATURES
-            - ALWAYS write temperature values as the number followed immediately by '|d|' (e.g., '96|d|', '102|d|', '18|d|').
-            - DO NOT use the word 'degrees', the symbol '°', or units like 'F' or 'C'. 
+            ### TEMPERATURE RULES
+            - DO NOT output exact temperature numbers (e.g., do not say "85" or "85 degrees").
+            - Instead, DESCRIBE the temperature naturally based on the data (e.g., "warm", "sweltering", "chilly", "freezing").
 
             ### OUTPUT REQUIREMENTS
             - Output EXACTLY 3 weather insights.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
-            - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
+            - LENGTH RULE: Each insight (Title + Body) MUST be between 85 and 115 characters long.
 
             ### STRICT ANTI-HALLUCINATION RULES
             - DO NOT COPY THE EXAMPLES. Generate insights based ONLY on the DATA INPUT.
@@ -65,7 +65,7 @@ class handler(BaseHTTPRequestHandler):
             - IF the forecast is only "Clouds" (and NO rain): Talk about overcast conditions, do not invent rain.
 
             ### EXAMPLE OUTPUT (FOR A WINTER BLIZZARD - DO NOT COPY THIS UNLESS IT IS SNOWING)
-            Bundle up tight -- Freezing temperatures and heavy snow mean you should wear a heavy winter coat before stepping into the 18|d| weather; Drive with caution -- Icy roads and low visibility are expected today so take your time and leave plenty of space between cars; Stay indoors -- High winds and blizzard conditions make being outside dangerous so grab a blanket and stay warm inside today;
+            Bundle up tight -- Freezing conditions and heavy snow mean you should wear a heavy winter coat outside; Drive with caution -- Icy roads and low visibility are expected today so take your time on the roads; Stay indoors -- High winds and blizzard conditions make it dangerous, so grab a blanket and stay warm;
 
             ### RESPONSE:
             '''
