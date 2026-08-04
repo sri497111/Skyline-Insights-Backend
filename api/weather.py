@@ -5,6 +5,7 @@ from groq import Groq
 class handler(BaseHTTPRequestHandler):
     def run_llm(self, data):
         try:
+            current_time = data.get('current_time', 'N/A')
             current_temp = data.get('current_temp', 'N/A')
             current_wind = data.get('current_wind', 'N/A')
             feels_like = data.get('feels_like', 'N/A')
@@ -23,7 +24,7 @@ class handler(BaseHTTPRequestHandler):
                 for item in forecast_list if isinstance(item, list) and len(item) == 3
             ]) if forecast_list else "N/A"
             
-            known_keys = {'current_temp', 'current_wind', 'feels_like', 'uv_index', 'tomorrow_condition', 'forecast'}
+            known_keys = {'current_time', 'current_temp', 'current_wind', 'feels_like', 'uv_index', 'tomorrow_condition', 'forecast_24h', 'forecast'}
             extra_data = {k: v for k, v in data.items() if k not in known_keys}
             additional = ", ".join([f"{k.replace('_', ' ').title()}: {v}" for k, v in extra_data.items()] if extra_data else "N/A")
 
@@ -32,28 +33,29 @@ class handler(BaseHTTPRequestHandler):
                 raise Exception("API Key not passed in")
             
             prompt = f'''
-            You are a precise weather assistant. Output ONLY the raw final insights string. Do not output headers, markdown formatting, or introductory text.
+            You are a precise, practical weather assistant. Output ONLY the raw final insights string. Do not output headers, markdown formatting, or introductory text.
 
             ### DATA INPUT
+            - Current Time: {current_time}
             - Current Temperature: {current_temp}
             - Feels-Like Temperature: {feels_like}
             - Current Wind: {current_wind}
             - Current UV Index: {uv_index}
-            - Tomorrow's Condition: {tomorrow}
-            - 24-Hour Forecast: {forecast_str}
+            - Tomorrow's Overall Condition: {tomorrow}
+            - Today's Forecast: {forecast_str}
             - Additional Context: {additional}
 
-            ### FALLBACK RULE
-            - IF data inputs are missing or marked 'N/A', DO NOT invent, hallucinate, or make up weather metrics. Output: "Insufficient weather data provided -- Unable to generate accurate daily insights;" repeated or structured as needed.
-
             ### OUTPUT REQUIREMENTS
-            - Output EXACTLY 3 weather insights based strictly on provided data.
+            - Output EXACTLY 3 weather insights.
+            - Use a practical, helpful tone. Provide common-sense advice (e.g., apply sunscreen, grab an umbrella) rather than extreme emergency warnings.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
 
-            ### RESPONSE:
-                        
+            ### EXAMPLE OUTPUT
+            Protect your skin -- High UV rays today mean you should grab sunscreen and wear sunglasses outdoors; Bring an umbrella -- scattered thunderstorms are hitting around 5pm today so keep rain gear handy; Limit heavy cardio -- active outdoor workouts should be postponed due to poorer air quality today;
+
+            ### RESPONSE:   
             '''
 
             client = Groq(api_key=key)
