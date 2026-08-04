@@ -54,16 +54,17 @@ class handler(BaseHTTPRequestHandler):
 
             ### OUTPUT REQUIREMENTS
             - Output EXACTLY 3 weather insights.
-            - Use a practical, helpful tone. Provide common-sense advice (e.g., apply sunscreen, grab an umbrella) rather than extreme emergency warnings.
+            - Use a practical, helpful tone. Provide common-sense advice (e.g., apply sunscreen, grab a jacket) rather than extreme emergency warnings.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
-            - LOGIC RULE: Compare the Current Time to the Today's Forecast. If a weather event (like rain) is already happening or indicated in the nearest forecast block, advise on the current conditions rather than predicting when it will start. Do not hallucinate exact times.
+            - LOGIC RULE: Compare the Current Time to the Today's Forecast. If a weather event (like rain) is already happening or indicated in the nearest forecast block, advise on the current conditions rather than predicting when it will start.
+            - ANTI-HALLUCINATION RULE: Base insights STRICTLY on the provided data. DO NOT advise bringing an umbrella or mention rain/precipitation unless "Rain", "Thunderstorm", or "Drizzle" is explicitly listed in the input data. If the forecast just says "Clouds", advise on overcast conditions, not rain.
 
             ### EXAMPLE OUTPUT
-            Protect your skin -- High UV rays today mean you should definitely apply a layer of sunscreen before heading outside; Keep rain gear handy -- Steady rain is expected throughout the day so make sure to bring your umbrella wherever you go; Stay hydrated -- Feels-like temperatures will be reaching 102|d| today so make sure to drink plenty of water and rest;
+            Protect your skin -- High UV rays today mean you should definitely apply a layer of sunscreen before heading outside; Dress in layers -- Steady cloud cover throughout the day means temperatures might feel a bit cooler when the wind picks up; Stay hydrated -- Feels-like temperatures will be reaching 102|d| today so make sure to drink plenty of water and rest;
 
-            ### RESPONSE: 
+            ### RESPONSE:
             '''
 
             client = Groq(api_key=key)
