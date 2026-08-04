@@ -58,11 +58,12 @@ class handler(BaseHTTPRequestHandler):
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
+            - LOGIC RULE: Compare the Current Time to the Today's Forecast. If a weather event (like rain) is already happening or indicated in the nearest forecast block, advise on the current conditions rather than predicting when it will start. Do not hallucinate exact times.
 
             ### EXAMPLE OUTPUT
-            Protect your skin -- High UV rays today mean you should apply sunscreen before heading into the 96|d| afternoon heat; Bring an umbrella -- scattered thunderstorms are hitting around 5pm today so keep rain gear handy; Stay hydrated -- feels-like temps will reach 102|d| so drink plenty of water throughout the day;
+            Protect your skin -- High UV rays today mean you should definitely apply a layer of sunscreen before heading outside; Keep rain gear handy -- Steady rain is expected throughout the day so make sure to bring your umbrella wherever you go; Stay hydrated -- Feels-like temperatures will be reaching 102|d| today so make sure to drink plenty of water and rest;
 
-            ### RESPONSE:   
+            ### RESPONSE: 
             '''
 
             client = Groq(api_key=key)
