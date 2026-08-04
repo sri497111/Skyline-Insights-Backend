@@ -48,6 +48,10 @@ class handler(BaseHTTPRequestHandler):
             - Today's Forecast: {forecast_str}
             - Additional Context: {additional}
 
+            ### FORMATTING RULES FOR TEMPERATURES
+            - ALWAYS write temperature values as the number followed immediately by '|d|' (e.g., '96|d|', '102|d|', '18|d|').
+            - DO NOT use the word 'degrees', the symbol '°', or units like 'F' or 'C'. 
+
             ### OUTPUT REQUIREMENTS
             - Output EXACTLY 3 weather insights.
             - Use a practical, helpful tone. Provide common-sense advice (e.g., apply sunscreen, grab an umbrella) rather than extreme emergency warnings.
@@ -56,7 +60,7 @@ class handler(BaseHTTPRequestHandler):
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
 
             ### EXAMPLE OUTPUT
-            Protect your skin -- High UV rays today mean you should grab sunscreen and wear sunglasses outdoors; Bring an umbrella -- scattered thunderstorms are hitting around 5pm today so keep rain gear handy; Limit heavy cardio -- active outdoor workouts should be postponed due to poorer air quality today;
+            Protect your skin -- High UV rays today mean you should apply sunscreen before heading into the 96|d| afternoon heat; Bring an umbrella -- scattered thunderstorms are hitting around 5pm today so keep rain gear handy; Stay hydrated -- feels-like temps will reach 102|d| so drink plenty of water throughout the day;
 
             ### RESPONSE:   
             '''
