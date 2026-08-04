@@ -54,15 +54,18 @@ class handler(BaseHTTPRequestHandler):
 
             ### OUTPUT REQUIREMENTS
             - Output EXACTLY 3 weather insights.
-            - Use a practical, helpful tone. Provide common-sense advice (e.g., apply sunscreen, grab a jacket) rather than extreme emergency warnings.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
             - LENGTH RULE: Each insight (Title + Body) MUST be between 100 and 140 characters long.
-            - LOGIC RULE: Compare the Current Time to the Today's Forecast. If a weather event (like rain) is already happening or indicated in the nearest forecast block, advise on the current conditions rather than predicting when it will start.
-            - ANTI-HALLUCINATION RULE: Base insights STRICTLY on the provided data. DO NOT advise bringing an umbrella or mention rain/precipitation unless "Rain", "Thunderstorm", or "Drizzle" is explicitly listed in the input data. If the forecast just says "Clouds", advise on overcast conditions, not rain.
 
-            ### EXAMPLE OUTPUT
-            Protect your skin -- High UV rays today mean you should definitely apply a layer of sunscreen before heading outside; Dress in layers -- Steady cloud cover throughout the day means temperatures might feel a bit cooler when the wind picks up; Stay hydrated -- Feels-like temperatures will be reaching 102|d| today so make sure to drink plenty of water and rest;
+            ### STRICT ANTI-HALLUCINATION RULES
+            - DO NOT COPY THE EXAMPLES. Generate insights based ONLY on the DATA INPUT.
+            - IF UV Index is 0-2 or it is nighttime: NEVER mention sunscreen, sun, or UV rays.
+            - IF the forecast includes "Rain": You MUST talk about rain, umbrellas, or wet conditions. 
+            - IF the forecast is only "Clouds" (and NO rain): Talk about overcast conditions, do not invent rain.
+
+            ### EXAMPLE OUTPUT (FOR A WINTER BLIZZARD - DO NOT COPY THIS UNLESS IT IS SNOWING)
+            Bundle up tight -- Freezing temperatures and heavy snow mean you should wear a heavy winter coat before stepping into the 18|d| weather; Drive with caution -- Icy roads and low visibility are expected today so take your time and leave plenty of space between cars; Stay indoors -- High winds and blizzard conditions make being outside dangerous so grab a blanket and stay warm inside today;
 
             ### RESPONSE:
             '''
