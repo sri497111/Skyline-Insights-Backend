@@ -50,7 +50,7 @@ class handler(BaseHTTPRequestHandler):
 
             ### TEMPERATURE RULES
             - DO NOT output exact temperature numbers (e.g., do not say "85" or "85 degrees").
-            - Instead, DESCRIBE the temperature naturally based on the data (e.g., "warm", "sweltering", "chilly", "freezing").
+            - Instead, DESCRIBE the temperature naturally based on the data (e.g., "warm", "hot", "chilly", "freezing", "mild", "dry", "sweltering").
 
             ### OUTPUT REQUIREMENTS
             - Output EXACTLY 3 weather insights.
