@@ -104,12 +104,13 @@ class handler(BaseHTTPRequestHandler):
           model='openai/gpt-oss-20b',
           messages=[{'role': 'user', 'content': prompt}],
           temperature=0.4,
-          max_tokens=200,
+          max_tokens=1000,
       )
 
-      retrieved = completion.choices[0].message.content.strip()
+      retrieved = completion.choices[0].message
+      content = retrieved.content or getattr(retrieved, 'reasoning_content', None)
 
-      return retrieved
+      return content
 
     except Exception as e:
       print(e)
