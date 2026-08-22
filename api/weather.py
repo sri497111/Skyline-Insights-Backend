@@ -5,7 +5,7 @@ from groq import Groq
 class handler(BaseHTTPRequestHandler):
     def run_llm(self, data):
         if not data or (data.get('current_temp') is None and data.get('forecast_24h') is None and data.get('forecast') is None):
-            raise Exception("No data provided: missing current_temp, forecast, or forecast_24h")
+            raise Exception("No weather data provided in request payload")
 
         current_time = data.get('current_time', 'N/A')
         current_temp = data.get('current_temp', 'N/A')
@@ -32,38 +32,38 @@ class handler(BaseHTTPRequestHandler):
 
         key = os.environ.get('API_KEY') or os.environ.get('GROQ_API_KEY')
         if not key:
-            raise Exception("API_KEY environment variable is not set on Vercel")
-        
+            raise Exception("API_KEY environment variable is not configured on Vercel")
+
         prompt = f'''
         You are a precise, practical weather assistant. Output ONLY the raw final insights string. Do not output headers, markdown formatting, or introductory text.
 
         ### DATA INPUT
         - Current Time: {current_time}
-        - Current Temperature: {current_temp}
-        - Feels-Like Temperature: {feels_like}
-        - Current Wind: {current_wind}
-        - Current UV Index: {uv_index}
-        - Tomorrow's Overall Condition: {tomorrow}
+        - Current Temp: {current_temp}
+        - Feels Like: {feels_like}
+        - Wind: {current_wind}
+        - UV Index: {uv_index}
+        - Tomorrow's Condition: {tomorrow}
         - Today's Forecast: {forecast_str}
         - Additional Context: {additional}
 
         ### TEMPERATURE RULES
         - DO NOT output exact temperature numbers (e.g., do not say "85" or "85 degrees").
-        - Instead, DESCRIBE the temperature naturally based on the data (e.g., "warm", "hot", "chilly", "freezing", "mild", "dry", "sweltering").
+        - Describe temperature naturally based on the data (e.g., "warm", "hot", "chilly", "freezing", "mild", "dry", "sweltering").
 
         ### OUTPUT REQUIREMENTS
         - Output EXACTLY 3 weather insights.
         - Strict Format: Direct Action Title -- Descriptive Reason;
         - Separate each of the 3 insights with a semicolon (;).
-        - LENGTH RULE: Each insight (Title + Body) MUST be between 85 and 115 characters long.
+        - Keep each insight reasonably detailed (around 90 to 110 characters).
 
         ### STRICT ANTI-HALLUCINATION RULES
-        - DO NOT COPY THE EXAMPLES. Generate insights based ONLY on the DATA INPUT.
+        - Generate insights based ONLY on the DATA INPUT.
         - IF UV Index is 0-2 or it is nighttime: NEVER mention sunscreen, sun, or UV rays.
-        - IF the forecast includes "Rain": You MUST talk about rain, umbrellas, or wet conditions. 
-        - IF the forecast is only "Clouds" (and NO rain): Talk about overcast conditions, do not invent rain.
+        - IF forecast includes "Rain": You MUST talk about rain or wet conditions.
+        - IF forecast is only "Clouds" (and NO rain): Talk about overcast conditions, do not invent rain.
 
-        ### EXAMPLE OUTPUT (FOR A WINTER BLIZZARD - DO NOT COPY THIS UNLESS IT IS SNOWING)
+        ### EXAMPLE OUTPUT
         Bundle up tight -- Freezing conditions and heavy snow mean you should wear a heavy winter coat outside; Drive with caution -- Icy roads and low visibility are expected today so take your time on the roads; Stay indoors -- High winds and blizzard conditions make it dangerous, so grab a blanket and stay warm;
 
         ### RESPONSE:
@@ -73,17 +73,19 @@ class handler(BaseHTTPRequestHandler):
 
         completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            messages=[{"role": "user", "content": prompt}],
             temperature=0.4,
-            max_tokens=200,
+            max_tokens=350,
         )
 
-        return completion.choices[0].message.content.strip()
+        message = completion.choices[0].message
+        content = getattr(message, 'content', None)
+
+        if not content:
+            finish_reason = getattr(completion.choices[0], 'finish_reason', 'unknown')
+            raise Exception(f"Model returned no content (finish_reason: {finish_reason})")
+
+        return content.strip()
 
     def send_json(self, code, payload):
         self.send_response(code)
