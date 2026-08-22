@@ -101,7 +101,7 @@ class handler(BaseHTTPRequestHandler):
       client = Groq(api_key=key)
 
       completion = client.chat.completions.create(
-          model='openai/gpt-oss-20b',
+          model='llama3-8b-8192',
           messages=[{'role': 'user', 'content': prompt}],
           temperature=0.4,
           max_tokens=1000,
