@@ -101,7 +101,7 @@ class handler(BaseHTTPRequestHandler):
       client = Groq(api_key=key)
 
       completion = client.chat.completions.create(
-          model='llama3-8b-8192',
+          model='openai/gpt-oss-20b',
           messages=[{'role': 'user', 'content': prompt}],
           temperature=0.4,
           max_tokens=1000,
@@ -109,6 +109,7 @@ class handler(BaseHTTPRequestHandler):
 
       retrieved = completion.choices[0].message
       content = retrieved.content or getattr(retrieved, 'reasoning_content', None)
+      
       if not content:
         raise Exception("No response")
         
