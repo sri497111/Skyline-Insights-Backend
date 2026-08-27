@@ -96,7 +96,6 @@ class handler(http.server.BaseHTTPRequestHandler):
             - IF the forecast includes "Rain": You MUST talk about rain, umbrellas, or wet conditions.
             - IF the forecast is only "Clouds" (and NO rain): Talk about overcast conditions, do not invent rain.
             - Avoid saying specific times (eg. 3pm etc.) just say a general time like afternoon or morning or later in the day.
-            - Never use a semicolon (;) in the insight or title itself - only to end one.
 
             ### EXAMPLE OUTPUT (FOR A WINTER BLIZZARD - DO NOT COPY THIS UNLESS IT IS SNOWING)
             Bundle up tight -- Freezing conditions and heavy snow mean you should wear a heavy winter coat outside; Drive with caution -- Icy roads and low visibility are expected today so take your time on the roads; Stay indoors -- High winds and blizzard conditions make it dangerous, so grab a blanket and stay warm;
@@ -108,7 +107,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 model="openai/gpt-oss-20b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
-                max_tokens=2500,
+                max_tokens=2048,
                 reasoning_format="hidden",
             )
 
