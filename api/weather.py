@@ -109,11 +109,13 @@ class handler(BaseHTTPRequestHandler):
 
       retrieved = completion.choices[0].message
       content = retrieved.content or getattr(retrieved, 'reasoning_content', None)
-
+      if not content:
+        raise Exception("No response")
+        
       return content
 
     except Exception as e:
-      return e
+      return f"Insights error {str(e)}"
 
   def send_json(self, code, payload):
     self.send_response(code)
