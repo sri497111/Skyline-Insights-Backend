@@ -108,7 +108,7 @@ class handler(http.server.BaseHTTPRequestHandler):
                 model="openai/gpt-oss-20b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
-                max_tokens=2048,
+                max_tokens=2500,
                 reasoning_format="hidden",
             )
 
