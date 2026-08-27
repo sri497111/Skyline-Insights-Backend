@@ -113,7 +113,7 @@ class handler(BaseHTTPRequestHandler):
       return content
 
     except Exception as e:
-      print(e)
+      return e
 
   def send_json(self, code, payload):
     self.send_response(code)
