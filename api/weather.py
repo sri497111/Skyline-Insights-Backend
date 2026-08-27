@@ -88,7 +88,6 @@ class handler(http.server.BaseHTTPRequestHandler):
             - Output EXACTLY 3 weather insights.
             - Strict Format: Direct Action Title -- Descriptive Reason;
             - Separate each of the 3 insights with a semicolon (;).
-            - Never use a semicolon (;) in the insight or title itself - only to end one.
             - LENGTH RULE: Each insight (Title + Body) MUST be between 85 and 115 characters long.
 
             ### STRICT ANTI-HALLUCINATION RULES
