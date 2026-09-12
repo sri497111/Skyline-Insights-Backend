@@ -32,7 +32,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             forecast_str = (
                 ", ".join(
                     [
-                        f"{item}: {item} {item.title()}"
+                        f"{item[0]}: {item[2]} {item[1].title()}"
                         for item in forecast_list
                         if isinstance(item, list) and len(item) == 3
                     ]
@@ -135,7 +135,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             params = urllib.parse.parse_qs(
                 urllib.parse.urlparse(self.path).query
             )
-            data = {k: v for k, v in params.items()}
+            data = {k: v[0] for k, v in params.items()}
             insights = self.run_llm(data)
             self.send_json(200, {"status": "success", "insights": insights})
         except Exception as e:
