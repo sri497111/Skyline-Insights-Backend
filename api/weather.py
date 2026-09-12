@@ -2,7 +2,8 @@ import http.server
 import json
 import os
 import urllib.parse
-from groq import Groq
+from google import genai
+from google.genai import types
 
 
 class handler(http.server.BaseHTTPRequestHandler):
@@ -10,8 +11,7 @@ class handler(http.server.BaseHTTPRequestHandler):
     def run_llm(self, data):
         try:
             if not data or (
-                data.get("temp") is None
-                and data.get("forecast") is None
+                data.get("temp") is None and data.get("forecast") is None
             ):
                 raise Exception("No data provided")
 
@@ -32,7 +32,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             forecast_str = (
                 ", ".join(
                     [
-                        f"{item[0]}: {item[2]} {item[1].title()}"
+                        f"{item}: {item} {item.title()}"
                         for item in forecast_list
                         if isinstance(item, list) and len(item) == 3
                     ]
@@ -58,16 +58,20 @@ class handler(http.server.BaseHTTPRequestHandler):
                     if k == "additional":
                         additional_items.append(str(v))
                     else:
-                        additional_items.append(f"{k.replace('_', ' ').title()}: {v}")
+                        additional_items.append(
+                            f"{k.replace('_', ' ').title()}: {v}"
+                        )
 
-            additional = ", ".join(additional_items) if additional_items else "N/A"
+            additional = (
+                ", ".join(additional_items) if additional_items else "N/A"
+            )
 
             key = os.environ.get("API_KEY")
             if not key:
                 raise Exception("API Key not passed in")
 
-            client = Groq(api_key=key)
-            prompt = f'''
+            client = genai.Client(api_key=key)
+            prompt = f"""
             You are a precise, practical weather assistant. Output ONLY the raw final insights string. Do not output headers, markdown formatting, or introductory text.
 
             ### DATA INPUT
@@ -101,25 +105,21 @@ class handler(http.server.BaseHTTPRequestHandler):
             Bundle up tight -- Freezing conditions and heavy snow mean you should wear a heavy winter coat outside; Drive with caution -- Icy roads and low visibility are expected today so take your time on the roads; Stay indoors -- High winds and blizzard conditions make it dangerous, so grab a blanket and stay warm;
 
             ### RESPONSE:
-            '''
+            """
 
-            completion = client.chat.completions.create(
-                model="openai/gpt-oss-20b",
-                messages=[{"role": "user", "content": prompt}],
+            config = types.GenerateContentConfig(
                 temperature=0.4,
-                max_tokens=2048,
-                reasoning_format="hidden",
+                max_output_tokens=2048,
             )
 
-            retrieved = completion.choices[0].message
-            content = retrieved.content or getattr(
-                retrieved, "reasoning_content", None
+            completion = client.models.generate_content(
+                model="gemini-3.1-flash-lite", contents=prompt, config=config
             )
 
-            if not content:
+            if not completion.text:
                 raise Exception("No response")
 
-            return content
+            return completion.text
 
         except Exception as e:
             return f"Insights error {str(e)}"
@@ -135,7 +135,7 @@ class handler(http.server.BaseHTTPRequestHandler):
             params = urllib.parse.parse_qs(
                 urllib.parse.urlparse(self.path).query
             )
-            data = {k: v[0] for k, v in params.items()}
+            data = {k: v for k, v in params.items()}
             insights = self.run_llm(data)
             self.send_json(200, {"status": "success", "insights": insights})
         except Exception as e:
